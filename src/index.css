@@ -1,0 +1,35 @@
+@import "tailwindcss";
+@config "../tailwind.config.js";
+
+@layer base {
+  :root {
+    font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+  }
+
+  body {
+    @apply bg-slate-50 text-slate-900 dark:bg-[#0a0a12] dark:text-slate-100 transition-colors duration-300 min-h-screen;
+  }
+}
+
+@layer components {
+  .glass {
+    @apply bg-white/40 backdrop-blur-md border border-white/20 shadow-lg dark:bg-white/5 dark:backdrop-blur-lg dark:border-white/10 dark:shadow-2xl;
+  }
+
+  .nasa-gradient {
+    @apply bg-gradient-to-r from-[#0B3D91] to-[#FC3D21];
+  }
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  @apply bg-transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  @apply bg-slate-300 rounded-full dark:bg-slate-700;
+}
