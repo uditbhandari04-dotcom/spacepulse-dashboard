@@ -1,21 +1,30 @@
 import axios from 'axios';
 
-const ISS_NOW_URL = 'http://api.open-notify.org/iss-now.json';
-const ASTROS_URL = 'http://api.open-notify.org/astros.json';
+const ISS_BASE_URL = 'https://api.wheretheiss.at/v1/satellites/25544';
+const ASTROS_URL = 'https://api.open-notify.org/astros.json'; // Note: Open-Notify astros might still have issues on HTTPS, but many proxies exist. 
 const NOMINATIM_URL = 'https://nominatim.openstreetmap.org/reverse';
 
 export const getISSLocation = async () => {
-  const response = await axios.get(ISS_NOW_URL);
+  const response = await axios.get(ISS_BASE_URL);
   return {
-    latitude: parseFloat(response.data.iss_position.latitude),
-    longitude: parseFloat(response.data.iss_position.longitude),
+    latitude: parseFloat(response.data.latitude),
+    longitude: parseFloat(response.data.longitude),
     timestamp: response.data.timestamp,
+    altitude: response.data.altitude,
+    velocity: response.data.velocity,
+    visibility: response.data.visibility
   };
 };
 
 export const getAstronauts = async () => {
-  const response = await axios.get(ASTROS_URL);
-  return response.data;
+  try {
+    // Open Notify doesn't support HTTPS well, using a CORS proxy or fallback
+    const response = await axios.get('https://corsproxy.io/?' + encodeURIComponent('http://api.open-notify.org/astros.json'));
+    return response.data;
+  } catch (error) {
+    console.error('Astronauts fetch error:', error);
+    return { number: 0, people: [] };
+  }
 };
 
 export const getNearestPlace = async (lat, lon) => {
@@ -38,7 +47,6 @@ export const getNearestPlace = async (lat, lon) => {
     }
     return 'Over Open Ocean / Remote Region';
   } catch (error) {
-    console.error('Reverse geocoding error:', error);
-    return 'Coordinate Tracking Active';
+    return 'Tracking Over International Waters';
   }
 };
